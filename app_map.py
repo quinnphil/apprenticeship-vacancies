@@ -2,7 +2,7 @@ import folium
 import streamlit as st
 import pandas as pd
 from folium.plugins import FastMarkerCluster
-
+from pathlib import Path
 from streamlit_folium import st_folium
 from streamlit_dynamic_filters import DynamicFilters
 
@@ -111,8 +111,19 @@ def get_map(df_locations):
     return m
 
 # Data
+
+
+# 1. Get the directory where the current script is located
+current_dir = Path(__file__).parent if "__file__" in locals() else Path.cwd()
+
+# 2. Construct the absolute path to the target file
+# Use the '/' operator to join paths
+file_path = current_dir / "output" / "vacancies_latest.json"
+
+
+
 df = (
-    pd.read_json(r'output/vacancies_latest.json')
+    pd.read_json(file_path)
     .loc[
         lambda _df: (~ _df['course.route'].isnull()) &
                     (~ _df['course.title'].isnull()) &
