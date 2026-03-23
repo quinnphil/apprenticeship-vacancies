@@ -153,7 +153,7 @@ with st.sidebar:
 
 
 
-st.button("Reset Filters", on_click=dynamic_filters.reset_filters)
+# st.button("Reset Filters", on_click=dynamic_filters.reset_filters)
 
 # Map
 f_map = get_map(dynamic_filters.filter_df())
