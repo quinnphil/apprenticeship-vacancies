@@ -10,7 +10,7 @@ from streamlit_dynamic_filters import DynamicFilters
 # :material/workspace_premium: Apprenticeship vacancies in England
 
 Explore apprenticeship vacancies across England.  
-Data updated: 20 March 2026
+Data: Tuesday, 24 March 2026 @ 07:18
 """
 
 def get_map(df_locations):
@@ -49,49 +49,70 @@ def get_map(df_locations):
          vacancy['title'],
          vacancy['employerName'],
          vacancy['addressLine1'],
+         vacancy['course.title'],
          vacancy['vacancyUrl']] for vacancy in vacancies]
 
     # Marker Cluster
-    callback = ('function (row) {'
-            'var marker = L.marker(new L.LatLng(row[0], row[1]), {color: "red"});'
-            'var icon = L.AwesomeMarkers.icon({'
-            "icon: 'briefcase',"
-            "iconColor: 'white',"
-            "markerColor: 'green',"
-            "prefix: 'glyphicon',"
-            "extraClasses: 'fa-rotate-0'"
-            '});'
-            'marker.setIcon(icon);'
-            "var popup = L.popup({maxWidth: '300'});"
-            'var card = L.DomUtil.create("div", "job-card");'
-            'card.style.cssText = "background: white; border-radius: 8px; padding: 15px; box-shadow: 0 2px 4px rgba(0,0,0,0.1); font-family: Arial, sans-serif;";'
-            'var title = L.DomUtil.create("h3", "job-title", card);'
-            'title.textContent = row[2];'
-            'title.style.cssText = "margin: 0 0 10px 0; color: #2c3e50; font-size: 16px; font-weight: bold;";'
-            'var employerRow = L.DomUtil.create("div", "job-detail", card);'
-            'employerRow.style.cssText = "margin-bottom: 8px; display: flex; align-items: center;";'
-            'var employerIcon = L.DomUtil.create("span", "glyphicon glyphicon-briefcase", employerRow);'
-            'employerIcon.style.cssText = "margin-right: 8px; color: #7f8c8d;";'
-            'var employerText = L.DomUtil.create("span", null, employerRow);'
-            'employerText.textContent = row[3];'
-            'employerText.style.cssText = "color: #555; font-size: 13px;";'
-            'var locationRow = L.DomUtil.create("div", "job-detail", card);'
-            'locationRow.style.cssText = "margin-bottom: 12px; display: flex; align-items: center;";'
-            'var locationIcon = L.DomUtil.create("span", "glyphicon glyphicon-map-marker", locationRow);'
-            'locationIcon.style.cssText = "margin-right: 8px; color: #e74c3c;";'
-            'var locationText = L.DomUtil.create("span", null, locationRow);'
-            'locationText.textContent = row[4];'
-            'locationText.style.cssText = "color: #555; font-size: 13px;";'
-            'var link = L.DomUtil.create("a", "job-link", card);'
-            'link.href = row[5];'
-            'link.textContent = "View Vacancy Details";'
-            'link.target = "_blank";'
-            'link.style.cssText = "display: inline-block; background: #3498db; color: white; padding: 8px 16px; border-radius: 4px; text-decoration: none; font-size: 13px; font-weight: 500; transition: background 0.2s;";'
-            'link.onmouseover = function() { this.style.background = "#2980b9"; };'
-            'link.onmouseout = function() { this.style.background = "#3498db"; };'
-            "popup.setContent(card);"
-            "marker.bindPopup(popup);"
-            'return marker};')
+
+    callback = """
+    function (row) {
+        var marker = L.marker(new L.LatLng(row[0], row[1]), {color: "red"});
+        var icon = L.AwesomeMarkers.icon({
+            icon: 'briefcase',
+            iconColor: 'white',
+            markerColor: 'green',
+            prefix: 'glyphicon',
+            extraClasses: 'fa-rotate-0'
+        });
+        marker.setIcon(icon);
+        var popup = L.popup({maxWidth: '300'});
+
+        var card = L.DomUtil.create("div", "job-card");
+        card.style.cssText = "background: white; border-radius: 8px; padding: 15px; box-shadow: 0 2px 4px rgba(0,0,0,0.1); font-family: Arial, sans-serif;";
+
+        var title = L.DomUtil.create("h3", "job-title", card);
+        title.textContent = row[2];
+        title.style.cssText = "margin: 0 0 10px 0; color: #2c3e50; font-size: 16px; font-weight: bold;";
+
+        var employerRow = L.DomUtil.create("div", "job-detail", card);
+        employerRow.style.cssText = "margin-bottom: 8px; display: flex; align-items: center;";
+        var employerIcon = L.DomUtil.create("span", "glyphicon glyphicon-briefcase", employerRow);
+        employerIcon.style.cssText = "margin-right: 8px; color: #7f8c8d;";
+        var employerText = L.DomUtil.create("span", null, employerRow);
+        employerText.textContent = row[3];
+        employerText.style.cssText = "color: #555; font-size: 13px;";
+
+        var locationRow = L.DomUtil.create("div", "job-detail", card);
+        locationRow.style.cssText = "margin-bottom: 8px; display: flex; align-items: center;";
+        var locationIcon = L.DomUtil.create("span", "glyphicon glyphicon-map-marker", locationRow);
+        locationIcon.style.cssText = "margin-right: 8px; color: #e74c3c;";
+        var locationText = L.DomUtil.create("span", null, locationRow);
+        locationText.textContent = row[4];
+        locationText.style.cssText = "color: #555; font-size: 13px;";
+
+        // Qualification
+        var qualRow = L.DomUtil.create("div", "job-detail", card);
+        qualRow.style.cssText = "margin-bottom: 12px; display: flex; align-items: center;";
+        var qualIcon = L.DomUtil.create("span", "glyphicon glyphicon-education", qualRow);
+        qualIcon.style.cssText = "margin-right: 8px; color: #9b59b6;";
+        var qualText = L.DomUtil.create("span", null, qualRow);
+        qualText.textContent = "Qualification: " + row[5];
+        qualText.style.cssText = "color: #555; font-size: 13px; font-weight: 500;";
+
+        var link = L.DomUtil.create("a", "job-link", card);
+        link.href = row[6];
+        link.textContent = "Vacancy Details";
+        link.target = "_blank";
+        link.style.cssText = "display: inline-block; background: #3498db; color: white; padding: 8px 16px; border-radius: 4px; text-decoration: none; font-size: 13px; font-weight: 500; transition: background 0.2s;";
+        link.onmouseover = function() { this.style.background = "#2980b9"; };
+        link.onmouseout = function() { this.style.background = "#3498db"; };
+
+        popup.setContent(card);
+        marker.bindPopup(popup);
+        return marker;
+    }
+    """
+
 
     marker_cluster = FastMarkerCluster(
         data=data,
@@ -118,7 +139,8 @@ current_dir = Path(__file__).parent if "__file__" in locals() else Path.cwd()
 
 # 2. Construct the absolute path to the target file
 # Use the '/' operator to join paths
-file_path = current_dir / "output" / "vacancies_latest.json"
+file_path = current_dir / "output" / "vacancies_england_latest.json"
+print(file_path)
 
 
 
