@@ -10,7 +10,7 @@ from streamlit_dynamic_filters import DynamicFilters
 # :material/workspace_premium: Apprenticeship vacancies in England
 
 Explore apprenticeship vacancies across England.  
-Data: Tuesday, 24 March 2026 @ 07:18
+Data: 25 March 2026
 """
 
 def get_map(df_locations):
