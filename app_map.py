@@ -10,7 +10,7 @@ from streamlit_dynamic_filters import DynamicFilters
 # :material/workspace_premium: Apprenticeship vacancies in England
 
 Explore apprenticeship vacancies across England.  
-Data: 25 March 2026
+Data: 26 March 2026
 """
 
 def get_map(df_locations):
@@ -19,10 +19,11 @@ def get_map(df_locations):
         location=[52.561928, -1.464854],
         tiles="cartodb positron",
         max_bounds=True,
-        min_lat=49.5,
-        max_lat=56.0,
+        min_lat=49,
+        max_lat=56.5,
         min_lon=-6.5,
         max_lon=2.0,
+        min_zoom=7,
         zoom_start=7,
     )
 
